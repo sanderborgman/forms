@@ -44,7 +44,7 @@
             if ($.fn.sortable) {
                 cloneContainer.sortable({
                     forcePlaceholderSize: true,
-                    items: ':visible'
+                    handle: '.cloner-row-handle'
                 }).bind('sortupdate', options.sortable.callback);
             }
         };
@@ -65,7 +65,9 @@
                     'selector': 'fieldset',
                     'removeButton': $('<a>').html('x')
                         .attr('href','javascript:void(0);')
-                        .addClass('cloner-row-remove')
+                        .addClass('cloner-row-remove'),
+                    'handleButton': $('<a>').html('<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>')
+                        .addClass('cloner-row-handle')
                 },
                 'sortable': {
                     'callback': function() {
@@ -95,6 +97,7 @@
                 .addClass('cloner-remove').addClass(options.buttons.remove.class);
 
             var removeRowBtn = options.row.removeButton;
+            var handleBtn = options.row.handleButton;
 
             var cloneContainer = $(this);
             var clonerBase = cloneContainer.find(options.row.selector+':eq(0)').clone();
@@ -114,6 +117,9 @@
                 var element = self.prepareField(clonerBase, rowCounter);
 
                 removeRowBtn.clone(true).appendTo(element);
+                if (cloneContainer.is('[vegas-cloneable-sortable]')) {
+                    handleBtn.clone(true).appendTo(element);
+                }
                 element.appendTo(cloneContainer);
 
                 cloneContainer.trigger('cloned');
@@ -140,9 +146,12 @@
 
             cloneContainer.find(options.row.selector).each(function() {
                 removeRowBtn.clone(true).appendTo($(this));
+                if (cloneContainer.is('[vegas-cloneable-sortable]')) {
+                    handleBtn.clone(true).appendTo($(this));
+                }
             });
 
-            self.sortable(cloneContainer, options);
+            setTimeout(function () {self.sortable(cloneContainer, options)}, 1000);
 
             cloneContainer.on('cloned', function() {
                 self.sortable(cloneContainer, options);
